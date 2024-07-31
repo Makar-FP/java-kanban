@@ -3,7 +3,6 @@ package org.example;
 import java.util.*;
 
 public class TaskManager {
-    private static TaskManager instance;
     private Map<Integer, Task> tasks = new HashMap<>();
     private Map<Integer, Epic> epics = new HashMap<>();
     private Map<Integer, Subtask> subtasks = new HashMap<>();
