@@ -6,10 +6,9 @@ public class Task {
     private int id;
     private Status status;
 
-    public Task(String title, String description, int id) {
+    public Task(String title, String description) {
         this.title = title;
         this.description = description;
-        this.id = id;
         this.status = Status.NEW;
     }
 
@@ -40,9 +39,9 @@ public class Task {
     @Override
     public String toString() {
         return "Task{" +
-                "title='" + title + '\'' +
+                "id=" + id +
+                ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", id=" + id +
                 ", status=" + status +
                 '}';
     }
