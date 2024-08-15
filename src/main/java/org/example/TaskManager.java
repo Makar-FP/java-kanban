@@ -1,141 +1,47 @@
 package org.example;
 
-import java.util.*;
+import java.util.List;
 
-public class TaskManager {
-    private Map<Integer, Task> tasks = new HashMap<>();
-    private Map<Integer, Epic> epics = new HashMap<>();
-    private Map<Integer, Subtask> subtasks = new HashMap<>();
-    private int idCounter = 0;
+public interface TaskManager {
+    Task createTask(Task task);
 
-    public TaskManager() {
-    }
+    Epic createEpic(Epic epic);
 
-    public Task createTask(Task task) {
-        task.setId(++idCounter);
-        tasks.put(task.getId(), task);
-        return task;
-    }
+    Subtask createSubtask(Subtask subtask);
 
-    public Epic createEpic(Epic epic) {
-        epic.setId(++idCounter);
-        epics.put(epic.getId(), epic);
-        return epic;
-    }
+    void updateTask(Task task);
 
-    public Subtask createSubtask(Subtask subtask) {
-        subtask.setId(++idCounter);
-        subtasks.put(subtask.getId(), subtask);
-        updateEpicStatus(subtask.getEpicId());
-        return subtask;
-    }
+    void updateEpic(Epic epic);
 
-    public void updateTask(Task task) {
-        tasks.put(task.getId(), task);
-    }
+    void updateSubtask(Subtask subtask);
 
-    public void updateEpic(Epic epic) {
-        epics.put(epic.getId(), epic);
-        updateEpicStatus(epic.getId());
-    }
+    List<Task> getAllTasks();
 
-    public void updateSubtask(Subtask subtask) {
-        subtasks.put(subtask.getId(), subtask);
-        updateEpicStatus(subtask.getEpicId());
-    }
+    List<Epic> getAllEpics();
 
-    public List<Task> getAllTasks() {
-        return new ArrayList<>(tasks.values());
-    }
+    List<Subtask> getAllSubtasks();
 
-    public List<Epic> getAllEpics() {
-        return new ArrayList<>(epics.values());
-    }
+    void deleteAllTasks();
 
-    public List<Subtask> getAllSubtasks() {
-        return new ArrayList<>(subtasks.values());
-    }
+    void deleteAllEpics();
 
-    public void deleteAllTasks() {
-        tasks.clear();
-    }
+    void deleteAllSubtasks();
 
-    public void deleteAllEpics() {
-        epics.clear();
-        subtasks.clear();
-    }
+    Task getTaskById(int id);
 
-    public void deleteAllSubtasks() {
-        subtasks.clear();
-        epics.forEach((id, epic) -> updateEpicStatus(id));
-    }
+    Epic getEpicById(int id);
 
-    public Task getTaskById(int id) {
-        return tasks.get(id);
-    }
+    Subtask getSubtaskById(int id);
 
-    public Epic getEpicById(int id) {
-        return epics.get(id);
-    }
+    List<Subtask> getSubtasksByEpicId(int epicId);
 
-    public Subtask getSubtaskById(int id) {
-        return subtasks.get(id);
-    }
+    void deleteTaskById(int id);
 
-    public List<Subtask> getSubtasksByEpicId(int epicId) {
-        List<Subtask> epicSubtasks = new ArrayList<>();
-        for (Subtask subtask : subtasks.values()) {
-            if (subtask.getEpicId() == epicId) {
-                epicSubtasks.add(subtask);
-            }
-        }
-        return epicSubtasks;
-    }
+    void deleteEpicById(int id);
 
-    public void deleteTaskById(int id) {
-        tasks.remove(id);
-    }
+    void deleteSubtaskById(int id);
 
-    public void deleteEpicById(int id) {
-        epics.remove(id);
-        subtasks.values().removeIf(subtask -> subtask.getEpicId() == id);
-    }
+    List<Task> getHistory();
 
-    public void deleteSubtaskById(int id) {
-        Subtask subtask = subtasks.remove(id);
-        if (subtask != null) {
-            updateEpicStatus(subtask.getEpicId());
-        }
-    }
-
-    public void updateEpicStatus(int epicId) {
-        Epic epic = epics.get(epicId);
-        if (epic == null) return;
-
-        boolean hasNew = false;
-        boolean hasInProgress = false;
-        boolean hasDone = false;
-
-        for (Subtask subtask : epic.getSubtasks()) {
-            switch (subtask.getStatus()) {
-                case NEW:
-                    hasNew = true;
-                    break;
-                case IN_PROGRESS:
-                    hasInProgress = true;
-                    break;
-                case DONE:
-                    hasDone = true;
-                    break;
-            }
-        }
-
-        if (hasInProgress || (hasNew && hasDone)) {
-            epic.setStatus(Status.IN_PROGRESS);
-        } else if (hasDone) {
-            epic.setStatus(Status.DONE);
-        } else {
-            epic.setStatus(Status.NEW);
-        }
-    }
+    public void updateEpicStatus(int epicId);
 }
