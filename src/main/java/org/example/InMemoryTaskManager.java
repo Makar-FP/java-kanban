@@ -137,10 +137,11 @@ public class InMemoryTaskManager implements TaskManager {
         return epicSubtasks;
     }
 
+    @Override
     public void deleteTaskById(int id) {
-        Task task = tasks.remove(id); // Удаляем задачу из списка задач
+        Task task = tasks.remove(id);
         if (task != null) {
-            historyManager.remove(id); // Удаляем задачу из истории
+            historyManager.remove(id);
         }
     }
 
