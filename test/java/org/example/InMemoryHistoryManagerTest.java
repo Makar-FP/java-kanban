@@ -24,6 +24,7 @@ class InMemoryHistoryManagerTest {
         taskManager.createTask(task);
 
         taskManager.getTaskById(task.getId());
+        taskManager.getTaskById(task.getId());
         List<Task> history = historyManager.getHistory();
 
         assertEquals(1, history.size(), "История должна содержать одну задачу");
