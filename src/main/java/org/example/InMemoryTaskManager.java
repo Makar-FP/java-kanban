@@ -141,6 +141,7 @@ public class InMemoryTaskManager implements TaskManager {
         tasks.remove(id);
         historyManager.remove(id);
     }
+    
     @Override
     public void deleteEpicById(int id) {
         epics.remove(id);
