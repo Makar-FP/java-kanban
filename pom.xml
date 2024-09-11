@@ -19,7 +19,7 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>RELEASE</version>
-            <scope>test</scope>
+            <scope>test/java/org/example</scope>
         </dependency>
     </dependencies>
 
