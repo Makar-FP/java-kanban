@@ -23,8 +23,7 @@ class InMemoryHistoryManagerTest {
         Task task = new Task("Task", "Description");
         taskManager.createTask(task);
 
-        taskManager.getTaskById(task.getId());
-        taskManager.getTaskById(task.getId());
+        taskManager.getTaskById(task.getId());  // Добавляем задачу в историю
         List<Task> history = historyManager.getHistory();
 
         assertEquals(1, history.size(), "История должна содержать одну задачу");
@@ -51,7 +50,7 @@ class InMemoryHistoryManagerTest {
         taskManager.getTaskById(task1.getId());
         taskManager.getTaskById(task2.getId());
 
-        taskManager.deleteTaskById(task1.getId());
+        taskManager.deleteTaskById(task1.getId());  // Удаляем первую задачу
 
         List<Task> history = historyManager.getHistory();
         assertEquals(1, history.size(), "История должна содержать одну задачу после удаления");
