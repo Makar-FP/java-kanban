@@ -16,6 +16,8 @@ class InMemoryHistoryManagerTest {
     void setUp() {
         taskManager = Managers.getDefault();
         historyManager = Managers.getDefaultHistory();
+        taskManager.deleteAllTasks();
+        taskManager.deleteAllEpics();
     }
 
     @Test
@@ -57,4 +59,4 @@ class InMemoryHistoryManagerTest {
         assertEquals(1, history.size(), "История должна содержать одну задачу после удаления");
         assertEquals(task2, history.get(0), "Оставшаяся задача должна быть второй");
     }
-}
+    }
