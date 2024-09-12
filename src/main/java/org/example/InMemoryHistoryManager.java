@@ -68,3 +68,13 @@ public class InMemoryHistoryManager implements HistoryManager {
         taskNodeMap.remove(node.task.getId());
     }
 }
+
+class Node {
+    Task task;
+    Node prev;
+    Node next;
+
+    public Node(Task task) {
+        this.task = task;
+    }
+}
