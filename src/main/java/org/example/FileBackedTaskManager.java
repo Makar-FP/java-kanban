@@ -14,26 +14,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.file = file;
     }
 
-    private void save() {
-        try (FileWriter writer = new FileWriter(file)) {
-            writer.write("id,type,name,status,description,epic\n");
-            for (Task task : getAllTasks()) {
-                writer.write(toString(task));
-                writer.write("\n");
-            }
-            for (Epic epic : getAllEpics()) {
-                writer.write(toString(epic));
-                writer.write("\n");
-            }
-            for (Subtask subtask : getAllSubtasks()) {
-                writer.write(toString(subtask));
-                writer.write("\n");
-            }
-        } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка при сохранении данных", e);
-        }
-    }
-
     @Override
     public Task createTask(Task task) {
         Task createdTask = super.createTask(task);
@@ -91,6 +71,59 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         save();
     }
 
+    public static FileBackedTaskManager loadFromFile(File file) {
+        FileBackedTaskManager manager = new FileBackedTaskManager(file);
+        try {
+            List<String> lines = Files.readAllLines(file.toPath());
+
+            for (String line : lines) {
+                if (line.startsWith("id")) {
+                    continue;
+                }
+                Task task = manager.fromString(line);
+                if (task instanceof Epic) {
+                    manager.createEpic((Epic) task);
+                } else if (!(task instanceof Subtask)) {
+                    manager.createTask(task);
+                }
+            }
+
+            for (String line : lines) {
+                if (line.startsWith("id")) {
+                    continue;
+                }
+                Task task = manager.fromString(line);
+                if (task instanceof Subtask) {
+                    manager.createSubtask((Subtask) task);
+                }
+            }
+
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка при загрузке данных", e);
+        }
+        return manager;
+    }
+
+    private void save() {
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write("id,type,name,status,description,epic\n");
+            for (Task task : getAllTasks()) {
+                writer.write(toString(task));
+                writer.write("\n");
+            }
+            for (Epic epic : getAllEpics()) {
+                writer.write(toString(epic));
+                writer.write("\n");
+            }
+            for (Subtask subtask : getAllSubtasks()) {
+                writer.write(toString(subtask));
+                writer.write("\n");
+            }
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка при сохранении данных", e);
+        }
+    }
+
     private String toString(Task task) {
         TaskType type = getType(task);
         String epicId = (task instanceof Subtask) ? String.valueOf(((Subtask) task).getEpicId()) : "";
@@ -146,38 +179,5 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 throw new IllegalArgumentException("Неизвестный тип задачи: " + type);
         }
         return task;
-    }
-
-    public static FileBackedTaskManager loadFromFile(File file) {
-        FileBackedTaskManager manager = new FileBackedTaskManager(file);
-        try {
-            List<String> lines = Files.readAllLines(file.toPath());
-
-            for (String line : lines) {
-                if (line.startsWith("id")) {
-                    continue;
-                }
-                Task task = manager.fromString(line);
-                if (task instanceof Epic) {
-                    manager.createEpic((Epic) task);
-                } else if (!(task instanceof Subtask)) {
-                    manager.createTask(task);
-                }
-            }
-
-            for (String line : lines) {
-                if (line.startsWith("id")) {
-                    continue;
-                }
-                Task task = manager.fromString(line);
-                if (task instanceof Subtask) {
-                    manager.createSubtask((Subtask) task);
-                }
-            }
-
-        } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка при загрузке данных", e);
-        }
-        return manager;
     }
 }
