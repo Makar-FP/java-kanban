@@ -144,18 +144,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return manager;
     }
 
-    private TaskType getType(Task task) {
-        if (task instanceof Epic) {
-            return TaskType.EPIC;
-        } else if (task instanceof Subtask) {
-            return TaskType.SUBTASK;
-        } else {
-            return TaskType.TASK;
-        }
-    }
-
     private String toString(Task task) {
-        TaskType type = getType(task);
+        TaskType type = task.getType();
         String epicId = (task instanceof Subtask) ? String.valueOf(((Subtask) task).getEpicId()) : "";
         return String.join(",",
                 String.valueOf(task.getId()),

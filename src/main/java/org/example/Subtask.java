@@ -20,6 +20,11 @@ public class Subtask extends Task {
     }
 
     @Override
+    public TaskType getType() {
+        return TaskType.SUBTASK;
+    }
+
+    @Override
     public void setStatus(Status status) {
         super.setStatus(status);
         taskManager.updateEpicStatus(epicId);

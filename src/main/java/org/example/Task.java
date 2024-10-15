@@ -62,6 +62,10 @@ public class Task {
         return (startTime != null) ? startTime.plus(duration) : null;
     }
 
+    public TaskType getType() {
+        return TaskType.TASK;
+    }
+
     @Override
     public String toString() {
         return "Task{" +
