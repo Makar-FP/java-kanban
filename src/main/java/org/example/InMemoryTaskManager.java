@@ -4,22 +4,35 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.TreeSet;
+import java.util.Comparator;
+import java.util.stream.Collectors;
+
 
 public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Subtask> subtasks = new HashMap<>();
     private final HistoryManager historyManager;
+    private final TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())));
     private int idCounter = 0;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.historyManager = historyManager;
     }
 
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
+    }
+
     @Override
     public Task createTask(Task task) {
-        task.setId(++idCounter);
-        tasks.put(task.getId(), task);
+        if (task.getStartTime() != null && hasTimeOverlap(task)) {
+            throw new IllegalArgumentException("Задача пересекается по времени с другой задачей");
+        }
+        if (task.getStartTime() != null) {
+            prioritizedTasks.add(task);
+        }
         return task;
     }
 
@@ -128,13 +141,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Subtask> getSubtasksByEpicId(int epicId) {
-        List<Subtask> epicSubtasks = new ArrayList<>();
-        for (Subtask subtask : subtasks.values()) {
-            if (subtask.getEpicId() == epicId) {
-                epicSubtasks.add(subtask);
-            }
-        }
-        return epicSubtasks;
+        return subtasks.values().stream()
+                .filter(subtask -> subtask.getEpicId() == epicId)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -199,5 +208,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
+    }
+
+    private boolean hasTimeOverlap(Task newTask) {
+        return prioritizedTasks.stream()
+                .anyMatch(existingTask -> existingTask.getStartTime() != null &&
+                        newTask.getStartTime() != null &&
+                        existingTask.getEndTime().isAfter(newTask.getStartTime()) &&
+                        newTask.getEndTime().isAfter(existingTask.getStartTime()));
     }
 }
