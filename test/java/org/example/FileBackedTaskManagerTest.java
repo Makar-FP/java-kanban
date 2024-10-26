@@ -1,5 +1,6 @@
 package org.example;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.FileWriter;
@@ -20,7 +21,7 @@ public class FileBackedTaskManagerTest {
         task.setStartTime(LocalDateTime.now());
         task.setDuration(Duration.ofMinutes(30));
 
-        assertThrows(ManagerSaveException.class, () -> {
+        Assertions.assertThrows(ManagerSaveException.class, () -> {
             manager.createTask(task);
         }, "Ожидается исключение ManagerSaveException при сохранении в недоступный файл");
     }

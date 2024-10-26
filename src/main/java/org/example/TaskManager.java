@@ -4,6 +4,8 @@ import java.util.List;
 
 public interface TaskManager {
 
+    List<Task> getPrioritizedTasks();
+
     Task createTask(Task task);
 
     Epic createEpic(Epic epic);
